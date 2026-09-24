@@ -1,32 +1,32 @@
-# Стандарт кодирования AeroCore (MISRA C++ Subset)
+# AeroCore Coding Standard (MISRA C++ Subset)
 
-Этот документ определяет правила написания кода для бортового вычислительного комплекса AeroCore.
-
----
-
-## 1. Область применения (Scope)
-* **Ядро (core/)**: Код ядра пишется на C++17/C++2строго подчиняетсяся** настоящему стандарту.
-* **Графический слой (hmi/)**: Код Qt 6 / QML исключен из области действия MISRA, так как GUI-слой не является flight-critical частью системы.
+This document establishes the code quality and safety rules for the AeroCore flight computing and simulation system.
 
 ---
 
-## 2. Категории правил (Rule CategorMandatory (Обязательно)ельно)** — отступления строго запрещRequired (Требуется)уется)** — допускаются отступления только с оформлением записи об отклонении (*Deviation RecorAdvisory (Рекомендуется)уется)** — базовые рекомендации по стилю и чистке кода.
+## 1. Scope
+* **Core Systems (core/)**: High-performance flight physics, math, and data handling (C++17/C++must strictly adherere** to this standard.
+* **Graphical Interface (hmi/)**: Qt 6 / QML code is excluded from strict MISRA compliance, as the HMI layer is non-flight-critical.
 
 ---
 
-## 3. Критические правила MISRA C++:2023 для AeroCore
-
-| Правило / Раздел | Описание | Зачем нужно в AeroCore |
-| :--- | :--- | :11.6.211.6.2** | Запрет чтения объектов до их инициализации | Гарантия предсказуемости данных телеметрии и физ7.0.5 / 7.0.6 7.0.6** | Контроль неявных приведений типов | Исключение ошибок точности при расчете 6DoF физ8.18.28.18.2** | Запрет использования присваивания в условии if (x = y) | Предотвращение случайных логических баMemory PolicyPolЗапрет динамической аллокации (heap)(heap)** после старта | Жесткие требования Real-Time: zero-allocation буф15.0.1 / 15.1.315.1.3** | Соблюдение *Rule of Zero* для спец-функций | Корректное управление кадрами данных и буферConcurrencyrrency** | Строгий контроль разделяемых данных и потоков | Безопасный обмен между SITL-генератором и ядExceptions/RTTIs/RTTI** | Ограничение или полный отказ от C++ исключений | Гарантированное детерминированное время выполнения |
+## 2. Rule CategoMandatorydatory** — Deviations are strictly prohibiRequiredquired** — Deviations are allowed only with a formal Deviation RecAdvisoryvisory** — Recommended best practices for code quality and maintainability.
 
 ---
 
-## 4. Обработка ошибок в RT-цикле (Data Core)
-* Ошибки датчиков или пакетов не должны прерывать реальный цикл вычислений.
-* Все ошибки переводятся в явные статус-коды кадра: OK, DEGRADED, CRITICAL.
+## 3. Critical MISRA C++:2023 Rules for AeroCore
+
+| Rule / Section | Description | Purpose in AeroCore |
+| :--- | :--- | :11.6.211.6.2** | Disallow reading uninitialized objects | Ensures deterministic telemetry and physics computat7.0.5 / 7.0.6 7.0.6** | Restrict implicit type conversions | Prevents precision loss in 6DoF flight physics matri8.18.28.18.2** | Prohibit assignment inside conditions if (x = y) | Eliminates accidental assignments and logic bMemory PolicyPolNo dynamic memory allocation (heap)(heap)** post-init | Enforces Hard Real-Time zero-allocation ring buff15.0.1 / 15.1.315.1.3** | Enforce Rule of Zero for special member functions | Guarantees safe data frame and telemetry stream handlConcurrencyrrency** | Strict control over shared data and thread synchronization | Prevents race conditions between SITL generator and cExceptions/RTTIs/RTTI** | Restrict or disable C++ exceptions / RTTI | Guarantees deterministic execution time in RT loops |
 
 ---
 
-## 5. Статический анализ и флаги компилятора
-Проверки обеспечиваются автоматически при каждой сбФлаги компиляторалятора**: -Wall -Wextra -Werror -Wconversion -Wsign-conversion
-* **Инструменты CI**: clang-tidy (с наборами bugprone-*, cert-*, cppcoreguidelines-*)
+## 4. Real-Time Error Handling (Data Core)
+* Sensor errors or dropped network packets must never break the main loop.
+* All errors are mapped into explicit frame status codes: OK, DEGRADED, CRITICAL.
+
+---
+
+## 5. Static Analysis & Compiler Flags
+Compliance is automatically verified during bCompiler Flags Flags**: -Wall -Wextra -Werror -Wconversion -Wsign-conversion
+* **CI Tools**: clang-tidy (with bugprone-*, cert-*, and cppcoreguidelines-* modules)
